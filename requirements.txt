@@ -1,0 +1,4 @@
+# 研公资讯汇 · 采集与输出依赖
+# 安装：pip install -r requirements.txt
+requests>=2.31.0
+lxml>=4.9.0

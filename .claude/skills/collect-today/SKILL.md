@@ -11,6 +11,16 @@ description: "研公资讯汇当日采集与输出：跑 fetch_tophub.py 采集�
 
 ---
 
+## Step 0：环境准备（仅首次 / 缺依赖时）
+
+采集与生成依赖 `requests` + `lxml`。若运行报 `ModuleNotFoundError`，先装依赖（项目根有 `requirements.txt`）：
+
+```bash
+pip install -r requirements.txt
+```
+
+> Windows 终端中文可能因 GBK 显示乱码，属正常；采集/生成命令统一加 `PYTHONIOENCODING=utf-8`。
+
 ## Step 1：采集今日原始数据
 
 跑采集脚本（tophub 列表 20 条 → 澎湃详情页正文 + 首图）：
@@ -65,7 +75,7 @@ cd sources/thepaper && PYTHONIOENCODING=utf-8 python generate_tophub.py
 
 - 脚本先自检每条正文字数，`[OK]` 表示落在 90–110；出现 `[!!]` 必须回到 Step 4 修正后重跑。
 - 产出 `output/——YYYY年MM月DD日.html`（仅 HTML，不再生成 CSV）。
-- 主题切换：改 `generate_tophub.py` 顶部 `THEME = "blue"` 为 `templates/` 下任一主题目录名即可，切换 HTML 风格不改内容。
+- 主题切换：改 `generate_tophub.py` 顶部 `THEME = "blue"` 为 `templates/` 下任一主题目录名即可（内置 `blue`/`dark`/`green`/`red`/`elegant`，开发指南见 `templates/README.md`），切换 HTML 风格不改内容。
 
 ## Step 7：校验产出
 

@@ -19,14 +19,16 @@
 4. **配图**：优先沿用源详情页首图；源无图则 `get_image_url`（Bing 图搜）按标题取图；再失败回退 `DEFAULT_IMG`。
 
 ## 输出
-1. **HTML**：套用 `templates/<theme>/template.html`（当前主题 `blue`），**只渲染上述 10 条**卡片，文件名 `——YYYY年MM月DD日.html`。切换主题仅需改生成器顶部 `THEME` 变量并在 `templates/` 下新建同名主题目录。
+1. **HTML**：套用 `templates/<theme>/template.html` + `card.html`（当前主题 `blue`），**只渲染上述 10 条**卡片，文件名 `——YYYY年MM月DD日.html`。切换主题仅需改生成器顶部 `THEME` 变量并在 `templates/` 下新建同名主题目录（内置 `blue`/`dark`/`green`/`red`/`elegant`，占位符契约见 `templates/README.md`）。
 2. **文章摘要**：120 字以内，覆盖当日要点，供公众号「摘要」字段。
 3. **文章标题**：1 个吸引人的主标题 + 若干备选，前置最具传播力的关键词，适合信息流点击。
 
 ## 文件约定
-- 目录结构：`sources/<source>/`（采集脚本+原始数据）、`output/`（仅当日 HTML）、`templates/<theme>/template.html`（主题模板）与规范文档置于项目根。
+- 目录结构：`sources/<source>/`（采集脚本+原始数据）、`sources/_renderer.py`（共享渲染层）、`output/`（仅当日 HTML）、`templates/<theme>/`（主题模板，含 `template.html`+`card.html`）与规范文档置于项目根。
+- `sources/_renderer.py`：共享层（取图 `get_image_url`、主题渲染 `render_html`、字数自检 `check_items`），两个生成器复用，消除重复。
 - `sources/thepaper/generate_tophub.py`：默认数据源生成器（择要10条+100字+Bing/源图），AI 汇总环节由会话人工完成。
 - `sources/huatu/generate_today.py`：备用源生成器（同规范）。
+- `requirements.txt`：依赖（`requests`+`lxml`），新环境 `pip install -r requirements.txt`。
 - 生成器路径已根化（上溯到项目根定位 `templates/<theme>/` 与 `output/`），移动位置不影响运行。
 
 ## 红线

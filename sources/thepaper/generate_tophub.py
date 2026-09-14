@@ -1,54 +1,18 @@
 # -*- coding: utf-8 -*-
 """默认数据源（tophub 今日热榜·澎湃）→ Claude 择要 10 条 → 100±10字扩写 → 公众号 HTML。
 
-路径已根化：脚本无论放哪都能定位到项目根的 文章模板.txt 与 产出/ 目录。
-图片策略：优先沿用澎湃详情页首图（imgpai.thepaper.cn）；源无图则 Bing 按标题取图；再失败回退 DEFAULT_IMG。
+渲染/取图/字数自检统一走 sources/_renderer.py（共享层，消除重复）。
+图片策略：优先沿用澎湃详情页首图（imgpai.thepaper.cn）；源无图则 Bing 按标题取图；再失败回退默认图。
 """
-import locale
 import os
-from datetime import datetime
+import sys
 
-import requests
-from lxml import etree
+# 把 sources/ 加入搜索路径以导入共享渲染层
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from _renderer import get_image_url, render_html, check_items, DEFAULT_IMG
 
-# 项目根：本脚本位于 sources/thepaper/ 下，上溯两级
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# 主题：切换只需改此变量 + 在 templates/ 下新建 <主题>/template.html
+# 主题：切换只需改此变量 + 在 templates/ 下新建 <主题>/ 目录（含 template.html 与 card.html）
 THEME = "blue"
-TEMPLATE_PATH = os.path.join(ROOT, "templates", THEME, "template.html")
-OUTPUT_DIR = os.path.join(ROOT, "output")
-DEFAULT_IMG = "https://img1.bjd.com.cn/2023/08/20/008c01906b4a4d081b62a119a7a51994a9de2d7a.jpeg"
-
-
-def get_image_url(search_name):
-    if not search_name or not search_name.strip():
-        return ""
-    url = "https://cn.bing.com/images/async"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) "
-                      "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 "
-                      "Mobile Safari/537.36 Edg/134.0.0.0"
-    }
-    params = {
-        "q": search_name, "first": 0, "count": 1, "cw": 437, "ch": 603,
-        "relp": 1, "datsrc": "I", "layout": "ColumnBased_Landscape",
-        "apc": 0, "mmasync": 2, "iid": "images.5306",
-    }
-    try:
-        r = requests.get(url, headers=headers, params=params, timeout=10)
-        r.encoding = "utf-8"
-        tree = etree.HTML(r.text)
-        for attr in ("data-src", "src", "data-murl"):
-            lst = tree.xpath(f"//img/@{attr}")
-            if lst:
-                iu = lst[0]
-                if "?" in iu:
-                    iu = iu.split("?")[0]
-                return iu
-        return ""
-    except Exception as e:
-        print(f"获取图片链接失败: {e}")
-        return ""
 
 
 # Claude 择要 10 条：title(≤10字) / content(100±10字扩写) / source_img(澎湃首图，空则Bing按title取)
@@ -119,74 +83,9 @@ def build_rows():
     return rows
 
 
-def render_html(rows):
-    locale.setlocale(locale.LC_CTYPE, "Chinese")
-    formatted_date = datetime.now().strftime("——%Y年%m月%d日")
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-    with open(TEMPLATE_PATH, "r", encoding="utf-8") as f:
-        content = f.read()
-
-    totle_html = ""
-    for idx, row in enumerate(rows, start=1):
-        detail = row["detail_new"]
-        title = row["ai_title"]
-        url = row["image_url"] or DEFAULT_IMG
-        i = f"{idx:02d}" if idx < 10 else str(idx)
-        html = f"""<section class="_editor" draggable="true">
-                                    <p>
-                                        <br/>
-                                    </p>
-                                    <section class="_editor" draggable="true">
-                                        <section style="display: inline-block; margin-top: 10px;">
-                                            <section style="display:flex;justify-content:center;align-items:flex-end;">
-                                                <section style="background-color: #b5d5eb;">
-                                                    <section style="margin:-3px 3px 3px -3px;">
-                                                        <section style="margin-right:4px;font-size:16px;color:#fff;background-color:#23569e;letter-spacing:2px;text-align:center;padding:4px 20px;transform:rotateZ(0deg);">
-                                                            <p>
-                                                                <span style="font-family: 微软雅黑, &quot;Microsoft YaHei&quot;;"><strong>{i} <span style="font-size: 17.01px;">{title}</span></strong></span>
-                                                            </p>
-                                                        </section>
-                                                    </section>
-                                                    <section style="width:16px;height:16px;background-color:#f2c96f;margin-left:auto;margin-top: -12px;">
-                                                        <br/>
-                                                    </section>
-                                                </section>
-                                            </section>
-                                        </section>
-                                    </section>
-                                    <section class="_editor" style="width: 95%; margin-right: auto; margin-left: auto;" draggable="true">
-                                        <section style="background-color: #cceafa; margin-top: 20px; margin-bottom: 20px; padding-top: 20px; padding-right: 10px; padding-left: 10px;">
-                                            <section class="_editor">
-                                                <section>
-                                                    <img src="{url}"/>
-                                                </section>
-                                            </section>
-                                            <section class="_editor">
-                                                <section style="margin-top: 10px; margin-bottom: 10px; color: #000000; font-size: 14px; letter-spacing: 2px; line-height: 1.75em;">
-                                                    <p style="text-align: left;">
-                                                        <span style="color: rgb(68, 68, 68); text-indent: 28px; font-family: 微软雅黑, &quot;Microsoft YaHei&quot;; font-size: 14px;">{i}、{detail}</span>
-                                                    </p>
-                                                </section>
-                                            </section>
-                                        </section>
-                                    </section>
-                                </section>"""
-        totle_html += html
-
-    all_html = content.replace("{datail}", totle_html).replace("{today_time}", formatted_date)
-    out_name = os.path.join(OUTPUT_DIR, f"{formatted_date}.html")
-    with open(out_name, "w", encoding="utf-8") as f:
-        f.write(all_html + "\n")
-    return out_name
-
-
 if __name__ == "__main__":
-    # 自检：正文长度应落在 90-110 字
-    for idx, it in enumerate(ITEMS, 1):
-        n = len(it["content"])
-        flag = "OK" if 90 <= n <= 110 else "!!"
-        print(f"[{flag}] {idx:02d} {it['title']} -> {n}字")
+    # 自检：正文长度应落在 90-110 字（[!!] 表示需回到 Step 4 修正）
+    check_items(ITEMS)
     rows = build_rows()
-    out = render_html(rows)
+    out = render_html(THEME, rows)
     print(f"已输出: {out}")

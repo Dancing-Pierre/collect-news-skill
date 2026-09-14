@@ -19,6 +19,7 @@ The whole flow is driven by the `collect-today` skill — just say "collect toda
 ```
 collect-news-skill/
 ├─ sources/
+│  ├─ _renderer.py            # shared layer (image fetch + themed render + char-count check)
 │  ├─ thepaper/                # default source (tophub hot-list → thepaper.cn detail)
 │  │  ├─ fetch_tophub.py       # crawler: 20 list items + thepaper detail body/image
 │  │  ├─ generate_tophub.py    # generator: 10-item pick + 100±10 chars + source/Bing image
@@ -28,11 +29,25 @@ collect-news-skill/
 │     ├─ generate_today.py     # generator (same spec, Claude-curated)
 │     └─ raw_news.json
 ├─ templates/
-│  └─ blue/template.html       # themed HTML template (switch via the THEME var)
+│  ├─ README.md                # theme authoring guide (placeholder contract)
+│  ├─ blue/  (template.html + card.html)   # default theme
+│  ├─ dark/  ...                            # dark business
+│  ├─ green/ ...                            # gov green
+│  ├─ red/   ...                            # festive red
+│  └─ elegant/ ...                          # ink minimalist
 ├─ output/                     # generated daily HTML (gitignored)
+├─ requirements.txt            # deps (requests + lxml)
 ├─ .claude/skills/collect-today/SKILL.md   # the callable skill
 └─ CLAUDE.md                   # production rules (auto-loaded each session)
 ```
+
+## Setup
+
+```bash
+pip install -r requirements.txt
+```
+
+Dependencies: `requests` (HTTP crawling), `lxml` (HTML parsing). On Windows, prefix crawl/generate commands with `PYTHONIOENCODING=utf-8` to avoid mojibake.
 
 ## Usage
 
@@ -46,7 +61,13 @@ The `ITEMS` list inside the generator holds Claude's 10 curated stories (≤10-c
 
 ## Switching themes
 
-Create a new directory under `templates/` (e.g. `templates/dark/template.html`), then set `THEME = "dark"` at the top of the generator. No content changes — only the HTML styling swaps.
+Five built-in themes — `blue` (default), `dark`, `green`, `red`, `elegant`. Set `THEME` at the top of the generator; content stays the same, only the HTML styling swaps:
+
+```python
+THEME = "dark"   # blue / dark / green / red / elegant
+```
+
+Each theme is a `templates/<name>/` directory with `template.html` (wrapper) + `card.html` (card). The placeholder contract and how to add a new theme are documented in [`templates/README.md`](templates/README.md). `blue` keeps the 96weixin banner (in production); the other four use pure inline styles with no external CDN dependency, the most robust choice inside the WeChat editor.
 
 ## Rules
 

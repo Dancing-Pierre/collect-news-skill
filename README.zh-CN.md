@@ -19,6 +19,7 @@
 ```
 collect-news-skill/
 ├─ sources/
+│  ├─ _renderer.py            # 共享渲染层（取图 + 主题渲染 + 字数自检，供两个源复用）
 │  ├─ thepaper/                # 默认数据源（tophub 热榜 → 澎湃详情）
 │  │  ├─ fetch_tophub.py       # 采集：20 条列表 + 澎湃详情正文/首图
 │  │  ├─ generate_tophub.py    # 生成器：择要10条 + 100±10字 + 源图/Bing
@@ -28,11 +29,25 @@ collect-news-skill/
 │     ├─ generate_today.py     # 生成器（同规范，Claude 汇总）
 │     └─ raw_news.json
 ├─ templates/
-│  └─ blue/template.html       # 主题化 HTML 模板（改 THEME 变量切换）
+│  ├─ README.md                # 主题开发指南（占位符契约）
+│  ├─ blue/  (template.html + card.html)   # 默认主题
+│  ├─ dark/  ...                            # 深色商务
+│  ├─ green/ ...                            # 政务绿
+│  ├─ red/   ...                            # 喜庆红
+│  └─ elegant/ ...                          # 水墨极简
 ├─ output/                     # 生成的当日 HTML（已忽略入库）
+├─ requirements.txt            # 依赖（requests + lxml）
 ├─ .claude/skills/collect-today/SKILL.md   # 可调用技能
 └─ CLAUDE.md                   # 生产规范（每次会话自动加载）
 ```
+
+## 环境准备
+
+```bash
+pip install -r requirements.txt
+```
+
+依赖：`requests`（HTTP 采集）、`lxml`（HTML 解析）。Windows 终端运行采集/生成命令时建议加 `PYTHONIOENCODING=utf-8` 避免中文乱码。
 
 ## 使用方式
 
@@ -46,7 +61,13 @@ python sources/thepaper/generate_tophub.py
 
 ## 切换主题
 
-在 `templates/` 下新建目录（如 `templates/dark/template.html`），再把生成器顶部 `THEME = "dark"` 即可。内容不变，只换 HTML 风格。
+内置 5 套主题：`blue`（默认）、`dark`、`green`、`red`、`elegant`，改生成器顶部 `THEME` 变量即可切换，内容不变只换 HTML 风格：
+
+```python
+THEME = "dark"   # blue / dark / green / red / elegant
+```
+
+每个主题是 `templates/<名>/` 下的 `template.html`（外壳）+ `card.html`（卡片），占位符契约与新增主题方法见 [`templates/README.md`](templates/README.md)。`blue` 沿用 96weixin banner（生产在用），其余四套为纯内联样式，不依赖外部 CDN，微信公众号编辑器内最稳健。
 
 ## 规范
 详见 `CLAUDE.md`（每次会话自动加载）：择要10条、正文100±10字、源图优先Bing回退、120字摘要+吸引人标题。
