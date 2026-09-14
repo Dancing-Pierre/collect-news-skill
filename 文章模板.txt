@@ -1,0 +1,89 @@
+<section class="_editor" data-tpl-id="17588" style="width: 100%; margin: 0px auto;">
+    <section style="background-color: #eaf4fb; text-align: center;">
+        <section style="background-image:url(http://newcdn.96weixin.com/mmbiz.qlogo.cn/mmbiz_gif/Ljib4So7yuWgEo15iaJoXX09gtfiaJI2iaMGMFYz2QJCwR4RAJ06QMyUbpQzTXsteibedKHT64u2zib5W5QPuabZE1xg/0?wx_fmt=gif);background-repeat:no-repeat;background-position:0% 0%;background-size:100%;">
+            <section style="background-image:url(http://newcdn.96weixin.com/mmbiz.qlogo.cn/mmbiz_png/Ljib4So7yuWgEo15iaJoXX09gtfiaJI2iaMGsNoyibtSEePWsAoE4UuEuCQlheiasFo1kJEteyud4ROXWGicrAGiaokWzQ/0?wx_fmt=png);background-repeat:no-repeat;background-position:100% 100%;background-size:100%;padding:0em 0px 0px;">
+                <section style="margin:0px;">
+                    <img src="http://newcdn.96weixin.com/mmbiz.qlogo.cn/mmbiz_png/Ljib4So7yuWgEo15iaJoXX09gtfiaJI2iaMGbOFoWFB7Nwg1WsBIBBIWWQIn0G4xnBBPscAgicdNpCat4L0QQ4MS4Hg/0?wx_fmt=png" style="display: block; width: 100%; height: auto;" alt=""/>
+                </section>
+                <section style="margin:12px 0px 0px;btransform: rotateZ(0deg);">
+                    <section style="margin:10px 0px;letter-spacing:2px;color:#23569e;line-height:1.2;">
+                        <p style="text-align: center;">
+                            <span style="font-family: 微软雅黑, &quot;Microsoft YaHei&quot;;"><span style="font-size: 43px; font-family: 微软雅黑, &quot;Microsoft YaHei&quot;;"><strong></strong></span><strong style="font-family: 微软雅黑, &quot;Microsoft YaHei&quot;; font-size: 43px;">研公资讯汇</strong><strong style="font-family: 微软雅黑, &quot;Microsoft YaHei&quot;; font-size: 43px;"></strong></span>
+                        </p>
+                    </section>
+                    <section style="background-image:url(http://newcdn.96weixin.com/mmbiz.qlogo.cn/mmbiz_png/Ljib4So7yuWgEo15iaJoXX09gtfiaJI2iaMGmI6YQ2UGt3iaTdeQeNBJOHBdiazyIxFIn5xdMB8DG4gmiaxAoqiafic7PzQ/0?wx_fmt=png);background-repeat:no-repeat;background-position:0% 0%;background-size:100%;">
+                        <section style="font-size:14px;color:#fff;background-color:#23569e;padding:3px 14px;maborder-radius:60px;letter-spacing:2px;text-align:center;display:inline-block;">
+                            <p style="padding:0 5px;">
+                                <span style="font-family: 微软雅黑, &quot;Microsoft YaHei&quot;;">{today_time}</span>
+                            </p>
+                        </section>
+                        <section style="margin:12px 0px 23px;color:#23569e;font-size:15px;letter-spacing:2px;">
+                            <p>
+                                Dancing-Pierre REPORT<br/>
+                            </p>
+                        </section>
+                    </section>
+                    <section></section>
+                    <section class="_sub_active">
+                        <section class="_editor" draggable="true">
+                            <section class="_editor" draggable="true">
+                                {datail}
+                            </section>
+                            <p>
+                                <span style="color: #23569e; font-family: 微软雅黑, &quot;Microsoft YaHei&quot;;">END</span>
+                            </p>
+                        </section>
+                        <section class="_editor">
+                            <p>
+                                <br/>
+                            </p>
+                        </section>
+                        <section class="_editor">
+                            <section style="display:flex;justify-content:center;align-items:center;">
+                                <section style="width:100px;background-color:#fefefe;padding:3px;margin:0 15px;">
+                                    <img src="https://img.96weixin.com/ueditor/20260121/17689567011768956701110577.png" style="width:100%;height:auto;display:block;" data-qr="1" title="undefined" alt="85"/>
+                                </section>
+                            </section>
+                        </section>
+                        <section class="_editor">
+                            <section style="color: #000000;font-size: 13px;line-height: 2;text-align:center;letter-spacing:2px;">
+                                <p>
+                                    <br/>
+                                </p>
+                                <p>
+                                    <span style="font-family: 微软雅黑, &quot;Microsoft YaHei&quot;;">图片|皮埃尔视界</span>
+                                </p>
+                                <p>
+                                    <span style="font-family: 微软雅黑, &quot;Microsoft YaHei&quot;;">头部插画|皮埃尔视界</span>
+                                </p>
+                                <p>
+                                    <span style="font-family: 微软雅黑, &quot;Microsoft YaHei&quot;;">图形、形状|皮埃尔视界</span>
+                                </p>
+                            </section>
+                        </section>
+                        <section class="_editor">
+                            <p>
+                                <br/>
+                            </p>
+                        </section>
+                        <section class="_editor">
+                            <p>
+                                <br/>
+                            </p>
+                        </section>
+                        <section class="_editor">
+                            <p>
+                                <br/>
+                            </p>
+                        </section>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </section>
+</section>
+<section class="_editor">
+    <p>
+        <br/>
+    </p>
+</section>
