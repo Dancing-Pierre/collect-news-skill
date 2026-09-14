@@ -1,35 +1,53 @@
-# news_crawler_generates_wechat_public_account_articles
-新闻爬虫生成微信公众号文章
+# collect-news-skill
 
-采集新闻详情，由 Claude 择要 10 条并扩写汇总，再填充成 HTML，方便导入公众号发布。效果可见微信公众号：皮埃尔视界。
+A Claude Code skill that turns daily news crawling into ready-to-publish WeChat public-account HTML. Crawl → Claude selects & expands → themed HTML output.
 
-## 目录结构
+See it live on the WeChat official account **皮埃尔视界** (Pierre's View).
+
+> 中文文档见 [README.zh-CN.md](README.zh-CN.md)。
+
+## How it works
+
+1. **Crawl** — `fetch_tophub.py` pulls the top-20 items from the tophub 澎湃 hot-list, then fetches the full article body + lead image from each thepaper.cn detail page.
+2. **Curate** — Claude picks the **10 most important** stories, expands each body to **90–110 characters**, and writes a **≤10-character** headline.
+3. **Render** — `generate_tophub.py` fills the chosen theme template and writes one HTML file: `output/——YYYY年MM月DD日.html`.
+
+The whole flow is driven by the `collect-today` skill — just say "collect today" and Claude runs end-to-end.
+
+## Directory layout
 
 ```
-wechat_spider_article/
-├─ 文章模板.txt            # 公众号 HTML 套版模板（共享）
-├─ 数据源/
-│  ├─ 今日热榜澎湃/        # 默认数据源（tophub 热榜 → 澎湃详情）
-│  │  ├─ fetch_tophub.py      # 采集：tophub 列表 20 条 + 澎湃详情正文/首图
-│  │  ├─ generate_tophub.py  # 生成器：择要10条 + 100±10字 + 源图/Bing
-│  │  ├─ tophub_list_today.json    # 当日列表原始数据（采集落盘）
-│  │  └─ tophub_detail_today.json  # 当日详情原始数据（采集落盘）
-│  └─ 华图时政/            # 备用数据源（ah.huatu.com 时政热点）
-│     ├─ generate_today.py   # 生成器（同规范，Claude 汇总）
+collect-news-skill/
+├─ sources/
+│  ├─ thepaper/                # default source (tophub hot-list → thepaper.cn detail)
+│  │  ├─ fetch_tophub.py       # crawler: 20 list items + thepaper detail body/image
+│  │  ├─ generate_tophub.py    # generator: 10-item pick + 100±10 chars + source/Bing image
+│  │  ├─ tophub_list_today.json     # raw list (crawled, gitignored)
+│  │  └─ tophub_detail_today.json   # raw detail (crawled, gitignored)
+│  └─ huatu/                   # backup source (ah.huatu.com/szrd/)
+│     ├─ generate_today.py     # generator (same spec, Claude-curated)
 │     └─ raw_news.json
-└─ 产出/
-   └─ ——YYYY年MM月DD日.html   # 最终公众号 HTML
+├─ templates/
+│  └─ blue/template.html       # themed HTML template (switch via the THEME var)
+├─ output/                     # generated daily HTML (gitignored)
+├─ .claude/skills/collect-today/SKILL.md   # the callable skill
+└─ CLAUDE.md                   # production rules (auto-loaded each session)
 ```
 
-## 使用方式
+## Usage
 
-**默认源（推荐）**：
+**Default source (recommended):**
 ```bash
-python "数据源/今日热榜澎湃/generate_tophub.py"
+python sources/thepaper/generate_tophub.py
 ```
-脚本内 `ITEMS` 为 Claude 当期择要的 10 条（标题≤10字、正文100±10字），运行后输出 `产出/——当日.html`。
+The `ITEMS` list inside the generator holds Claude's 10 curated stories (≤10-char title, 100±10-char body). Running it outputs `output/——<today>.html`.
 
-> 采集环节（tophub 列表+澎湃详情）需先跑采集落盘 `tophub_detail.json`，再由 Claude 在会话内完成择要与扩写并填入 `ITEMS`。
+> Crawling (tophub list + thepaper detail) must run first to land `tophub_detail_today.json`, after which Claude curates the picks in-session and fills `ITEMS`. The skill automates this entire loop.
 
-## 规范
-详见 `CLAUDE.md`（每次会话自动加载）：择要10条、正文100±10字、源图优先Bing回退、120字摘要+吸引人标题。
+## Switching themes
+
+Create a new directory under `templates/` (e.g. `templates/dark/template.html`), then set `THEME = "dark"` at the top of the generator. No content changes — only the HTML styling swaps.
+
+## Rules
+
+See `CLAUDE.md` (auto-loaded each session): pick 10 items, 100±10-char bodies, source-image-first with Bing fallback, ≤120-char summary + click-worthy headline.

@@ -16,16 +16,16 @@ description: "研公资讯汇当日采集与输出：跑 fetch_tophub.py 采集�
 跑采集脚本（tophub 列表 20 条 → 澎湃详情页正文 + 首图）：
 
 ```bash
-cd "数据源/今日热榜澎湃" && PYTHONIOENCODING=utf-8 python fetch_tophub.py
+cd sources/thepaper && PYTHONIOENCODING=utf-8 python fetch_tophub.py
 ```
 
-- 产出 `tophub_list_today.json`、`tophub_detail_today.json`。
+- 产出 `sources/thepaper/tophub_list_today.json`、`sources/thepaper/tophub_detail_today.json`。
 - 控制台中文可能因 Windows GBK 终端显示乱码，属正常，JSON 本身为 UTF-8。
-- 若采集失败（网络/源站结构变更），改用备用源 `数据源/华图时政/generate_today.py`，并向用户报告。
+- 若采集失败（网络/源站结构变更），改用备用源 `sources/huatu/generate_today.py`，并向用户报告。
 
 ## Step 2：读取并理解原始数据
 
-用 Read 工具读 `数据源/今日热榜澎湃/tophub_detail_today.json`，逐条理解 20 条的 title/content/img/url。
+用 Read 工具读 `sources/thepaper/tophub_detail_today.json`，逐条理解 20 条的 title/content/img/url。
 
 - content 为空（详情页未采到正文）的条目：优先用 WebSearch 按标题补素材；WebFetch 对 thepaper.cn 域名常被网络策略拦截，直接走 WebSearch。
 - 同一事件常有多条重复角度，按主题去重。
@@ -39,7 +39,7 @@ cd "数据源/今日热榜澎湃" && PYTHONIOENCODING=utf-8 python fetch_tophub.
 3. 行业产业规划
 4. 民生与监管个案
 
-编辑去重原则：与昨日已发布条目（查 `产出/` 下前一日的 HTML）**主题完全重复**的，优先剔除；当日热榜霸榜的同一主题（如占 5 条）保留 1 条最具信息量的即可，避免连日堆叠。
+编辑去重原则：与昨日已发布条目（查 `output/` 下前一日的 HTML）**主题完全重复**的，优先剔除；当日热榜霸榜的同一主题（如占 5 条）保留 1 条最具信息量的即可，避免连日堆叠。
 
 ## Step 4：扩写正文 + 精炼标题 + 配图
 
@@ -51,7 +51,7 @@ cd "数据源/今日热榜澎湃" && PYTHONIOENCODING=utf-8 python fetch_tophub.
 
 ## Step 5：更新生成器 ITEMS
 
-用 Edit 工具替换 `数据源/今日热榜澎湃/generate_tophub.py` 中的 `ITEMS` 列表：
+用 Edit 工具替换 `sources/thepaper/generate_tophub.py` 中的 `ITEMS` 列表：
 
 - 同步更新注释行 `# 数据源：tophub 今日热榜·澎湃 YYYY-MM-DD 采集` 的日期。
 - 每条结构固定：`title` / `content` / `source_img`。
@@ -60,16 +60,17 @@ cd "数据源/今日热榜澎湃" && PYTHONIOENCODING=utf-8 python fetch_tophub.
 ## Step 6：运行生成器
 
 ```bash
-cd "数据源/今日热榜澎湃" && PYTHONIOENCODING=utf-8 python generate_tophub.py
+cd sources/thepaper && PYTHONIOENCODING=utf-8 python generate_tophub.py
 ```
 
 - 脚本先自检每条正文字数，`[OK]` 表示落在 90–110；出现 `[!!]` 必须回到 Step 4 修正后重跑。
-- 产出 `产出/——YYYY年MM月DD日.html`（仅 HTML，不再生成 CSV）。
+- 产出 `output/——YYYY年MM月DD日.html`（仅 HTML，不再生成 CSV）。
+- 主题切换：改 `generate_tophub.py` 顶部 `THEME = "blue"` 为 `templates/` 下任一主题目录名即可，切换 HTML 风格不改内容。
 
 ## Step 7：校验产出
 
 ```bash
-ls -la 产出/  # 确认当日 HTML 与 CSV 已生成、日期正确
+ls -la output/  # 确认当日 HTML 已生成、日期正确
 ```
 
 确认：HTML 文件名日期为当天；图片非空（源图优先，无回退默认图）。

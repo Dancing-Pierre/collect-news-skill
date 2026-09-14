@@ -13,12 +13,14 @@ import requests
 from lxml import etree
 from os.path import exists
 
-# 项目根：本脚本位于 数据源/华图时政/ 下，上溯两级
+# 项目根：本脚本位于 sources/huatu/ 下，上溯两级
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUTPUT_DIR = os.path.join(ROOT, "产出")
+# 主题：切换只需改此变量 + 在 templates/ 下新建 <主题>/template.html
+THEME = "blue"
+OUTPUT_DIR = os.path.join(ROOT, "output")
 RAW_PATH = os.path.join(HERE, "raw_news.json")
-TEMPLATE_PATH = os.path.join(ROOT, "文章模板.txt")
+TEMPLATE_PATH = os.path.join(ROOT, "templates", THEME, "template.html")
 DEFAULT_IMG = "https://img1.bjd.com.cn/2023/08/20/008c01906b4a4d081b62a119a7a51994a9de2d7a.jpeg"
 
 # Claude 汇总的精炼标题（≤10字，突出专业性与关键信息），与 raw_news.json 顺序一一对应

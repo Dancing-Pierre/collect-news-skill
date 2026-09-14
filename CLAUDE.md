@@ -8,7 +8,7 @@
 
 ## 采集与数据源
 - **默认数据源**：tophub 今日热榜·澎湃（`https://tophub.today/n/wWmoO5Rd4E`），列表页 20 条 → 详情页 thepaper.cn 正文。
-- 备用数据源：华图时政（`ah.huatu.com/szrd/`），见 `数据源/华图时政/`。
+- 备用数据源：华图时政（`ah.huatu.com/szrd/`），见 `sources/huatu/`。
 - 各数据源独立成文件夹，互不干扰；正文/图片直接采用源数据改写，不照搬原文。
 
 ## 汇总（核心编辑规则）
@@ -19,15 +19,15 @@
 4. **配图**：优先沿用源详情页首图；源无图则 `get_image_url`（Bing 图搜）按标题取图；再失败回退 `DEFAULT_IMG`。
 
 ## 输出
-1. **HTML**：套用 `文章模板.txt`，**只渲染上述 10 条**卡片，文件名 `——YYYY年MM月DD日.html`。
+1. **HTML**：套用 `templates/<theme>/template.html`（当前主题 `blue`），**只渲染上述 10 条**卡片，文件名 `——YYYY年MM月DD日.html`。切换主题仅需改生成器顶部 `THEME` 变量并在 `templates/` 下新建同名主题目录。
 2. **文章摘要**：120 字以内，覆盖当日要点，供公众号「摘要」字段。
 3. **文章标题**：1 个吸引人的主标题 + 若干备选，前置最具传播力的关键词，适合信息流点击。
 
 ## 文件约定
-- 目录结构：`数据源/<源名>/`（采集脚本+原始数据）、`产出/`（仅当日 HTML）、根目录放共享 `文章模板.txt` 与规范文档。
-- `数据源/今日热榜澎湃/generate_tophub.py`：默认数据源生成器（择要10条+100字+Bing/源图），AI 汇总环节由会话人工完成。
-- `数据源/华图时政/generate_today.py`：备用源生成器（同规范）。
-- 生成器路径已根化（上溯到项目根定位 `文章模板.txt` 与 `产出/`），移动位置不影响运行。
+- 目录结构：`sources/<source>/`（采集脚本+原始数据）、`output/`（仅当日 HTML）、`templates/<theme>/template.html`（主题模板）与规范文档置于项目根。
+- `sources/thepaper/generate_tophub.py`：默认数据源生成器（择要10条+100字+Bing/源图），AI 汇总环节由会话人工完成。
+- `sources/huatu/generate_today.py`：备用源生成器（同规范）。
+- 生成器路径已根化（上溯到项目根定位 `templates/<theme>/` 与 `output/`），移动位置不影响运行。
 
 ## 红线
 - 未经用户主动要求，**不得执行 git commit / 分支等操作**。

@@ -161,11 +161,11 @@ cython_debug/
 
 # ===== 项目专属 =====
 # 每日产出（生成产物，每日重生）
-产出/
+output/
 
 # 采集的原始数据（每日重生）
-数据源/今日热榜澎湃/tophub_*.json
-数据源/华图时政/raw_news.json
+sources/thepaper/tophub_*.json
+sources/huatu/raw_news.json
 
 # Windows 下 `> nul` 误生成的同名垃圾文件
 nul
